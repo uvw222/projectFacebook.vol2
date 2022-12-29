@@ -1,0 +1,124 @@
+#ifndef _FANPAGE_H
+#define _FANPAGE_H
+
+#include <iostream>
+#include <string.h>
+#include "StatusArr.h"
+#include "MemberArr.h"
+#include "Member.h"
+#pragma warning(disable: 4430)
+
+using namespace std;
+
+class FanPage
+{
+private:
+	char* name;
+	StatusArr myStatus;
+	MemberArr myFollowers;
+
+public:
+	FanPage(const char* name);
+	~FanPage();
+	const char* getName()          const;
+	StatusArr getMyStatus()        const;
+	void addFollower(Member* other);
+	void addStatus(char* text);
+	void showMyStatus()            const;
+	void showMyFollowers10Status() const;
+	void showMyFollowers()         const;
+	void removeFollowers(Member* other);
+	void show()                    const;
+};
+
+#endif
+
+קוד CPP
+
+#include "FanPage.h"
+
+FanPage::FanPage(const char* name)
+{
+	this->name = new char[strlen(name) + 1];
+	strcpy(this->name, name);
+}
+
+const char* FanPage::getName() const
+{
+	return this->name;
+}
+
+StatusArr FanPage::getMyStatus() const
+{
+	return this->myStatus;
+}
+
+//need to handle - waitnig for member have fanpage arr
+void FanPage::addFollower(Member* other)
+{
+	if (other != nullptr)
+	{
+		if (this->myFollowers.findMemberByNameAndReturnIndex(other->getName()) != NOT_FOUND)
+		{
+			this->myFollowers.addMember(other);
+			//other->addFriend(this);
+		}
+	}
+}
+
+void FanPage::addStatus(char* text)
+{
+	this->myStatus.addStatus(text);
+}
+
+void FanPage::showMyStatus() const
+{
+	for (int i = 0; i < this->myStatus.getSize(); i++)
+		this->myStatus.getStatusByIndex(i)->show();
+}
+
+void FanPage::showMyFollowers10Status() const
+{
+
+	for (int i = 0; i < this->myFollowers.getSize(); i++)
+	{
+		int lenght = this->myFollowers.getMemberByIndex(i)->getMyStatus().getSize();
+		//this loop run on the 10 latests status of the #i-follower 
+		for (int j = lenght - 1; j > -1 && j > lenght - 10 - 1; j++)
+			this->myFollowers.getMemberByIndex(i)->getMyStatus().getStatusByIndex(j)->show();
+	}
+}
+
+StatusArr FanPage::getMyStatus() const
+{
+	return this->myStatus;
+}
+
+void FanPage::showMyFollowers() const
+{
+	for (int i = 0; i < this->myFollowers.getSize(); i++)
+		cout << this->myFollowers.getMemberByIndex(i)->getName() << "\n";
+}
+
+//need to handle - waitnig for member have fanpage arr
+void FanPage::removeFollowers(Member* other)
+{
+	if (other != nullptr)
+	{
+		if (this->myFollowers.findMemberByNameAndReturnIndex(other->getName()) != NOT_FOUND)
+		{
+			this->myFollowers.removeMember(other);
+			//other->removeFriend(this);
+		}
+	}
+}
+
+void FanPage::show() const
+{
+	cout << "My name is: " << this->name << "\n";
+}
+
+FanPage::~FanPage()
+{
+	delete[]name;
+}

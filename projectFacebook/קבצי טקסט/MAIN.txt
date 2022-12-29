@@ -1,0 +1,28 @@
+#include <iostream>
+using namespace std;
+void getAndPrintMenu(int& userChoise);
+
+int main()
+{
+	int userChoise;
+	getAndPrintMenu(userChoise);
+	return 0;
+}
+
+void getAndPrintMenu(int& userChoise)
+{
+	cout << "what would like to do today?" << '\n'
+		<< "1. sign in as a new friend" << '\n'
+		<< "2. sign in as a new fan page" << '\n'
+		<< "3. add a new status" << '\n'
+		<< "4. show all of my statuses" << '\n'
+		<< "5. show my friends' 10 latest statuses" << '\n'
+		<< "6. add a new friend" << '\n'
+		<< "7. delete a friend from my friends list" << '\n'
+		<< "8. subscribe a new fan page" << '\n'
+		<< "9. unsubscribe a fan page" << '\n'
+		<< "10. show all facebooks' members" << '\n'
+		<< "11. show a members' friends or a fan page subscribers" << '\n'
+		<<"12. exit"<<'\n';
+	cin >> userChoise;
+}

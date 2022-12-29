@@ -1,0 +1,109 @@
+#ifndef _MEMBER_ARR_H
+#define _MEMBER_ARR_H
+class Member;
+#pragma warning(disable: 4430)
+
+class MemberArr
+{
+private:
+	int const NOT_FOUND = -1;
+	Member** memberArr;
+	int logSize, phySize;
+	void memberArrRealloc(int currSize, int newSize);
+	void swap(int index1, int index2);
+
+public:
+	MemberArr();
+	~MemberArr();
+
+	int getSize()											 const;
+	void addMember(Member* member);
+	void removeMember(Member* member);
+	int findMemberByNameAndReturnIndex(const char* member)   const;
+	Member* getMemberByIndex(int index)                      const;
+
+	
+};
+#endif
+
+
+
+קוד CPP
+#include "MemberArr.h"
+#include "Member.h"
+#include <iostream>
+#include <string.h>
+#pragma warning(disable: 4996)
+
+
+MemberArr::MemberArr()
+{
+	this->memberArr = nullptr;
+	this->logSize = this->phySize = 0;
+}
+
+int MemberArr::getSize() const
+{
+	return this->logSize;
+}
+
+void MemberArr::addMember(Member* member)
+{
+	if (member != nullptr)
+	{
+		if (this->logSize == this->phySize)
+		{
+			this->phySize *= 2;
+			this->memberArrRealloc(this->logSize, this->phySize);
+		}
+		this->memberArr[this->logSize] = member;
+		this->logSize++;
+	}
+}
+
+void MemberArr::memberArrRealloc(int currSize, int newSize)
+{
+	Member** newStArr = new Member * [newSize];
+	for (int i = 0; i < currSize; i++)
+		newStArr[i] = this->memberArr[i];
+	delete[] this->memberArr;
+	this->memberArr = newStArr;
+}
+
+void MemberArr::removeMember(Member* member)
+{
+	int memberIndex = findMemberByNameAndReturnIndex(member->getName());
+	if (memberIndex != NOT_FOUND)
+	{
+		swap(memberIndex, this->logSize - 1);
+		this->memberArr[this->logSize - 1] = nullptr;
+		this->logSize--;
+	}
+}
+
+int MemberArr::findMemberByNameAndReturnIndex(const char* memberName) const
+{
+	for (int i = 0; i < this->logSize; i++)
+		if (strcmp(this->memberArr[i]->getName(), memberName) == 0)
+			return i;
+	return NOT_FOUND;
+}
+
+Member* MemberArr::getMemberByIndex(int index) const
+{
+	if(index != NOT_FOUND)
+		return this->memberArr[index];
+	return nullptr;
+}
+
+void MemberArr::swap(int index1, int index2)
+{
+	Member* tmp = this->memberArr[index1];
+	this->memberArr[index1] = this->memberArr[index2];
+	this->memberArr[index2] = tmp;
+}
+
+MemberArr::~MemberArr()
+{
+	delete[] this->memberArr;
+}

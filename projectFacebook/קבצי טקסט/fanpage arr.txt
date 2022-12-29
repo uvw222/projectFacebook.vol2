@@ -1,0 +1,78 @@
+#ifndef _FAN_PAGE_ARR_H
+#define _FAN_PAGE_ARR_H
+class FanPage;
+#pragma warning(disable: 4430)
+
+class FanPageArr
+{
+private:
+	int const NOT_FOUND = -1;
+	FanPage** fanPageArr;
+	int logSize, phySize;
+	void fanPageArrRealloc(int currSize, int newSize);
+	void swap(int index1, int index2);
+
+public:
+	FanPageArr();
+	~FanPageArr();
+
+	int getSize()											  const;
+	void addFanPage(FanPage* fanPage);
+	void removeFanPage(FanPage* fanPage);
+	int findFanPageByNameAndReturnIndex(const char* fanPage)   const;
+	FanPage* getFanPageByIndex(int index)                      const;
+
+
+};
+#endif
+
+קוד CPP
+
+#include "StatusArr.h"
+#include <iostream>
+#include <string.h>
+#pragma warning(disable: 4996)
+
+StatusArr::StatusArr()
+{
+	this->stArr = nullptr;
+	this->logSize = this->phySize = 0;
+}
+
+int StatusArr::getSize() const
+{
+	return this->logSize;
+}
+
+void StatusArr::addStatus(char* text)
+{
+	Status* newStatus = new Status(text);
+	if (this->logSize == this->phySize)
+	{
+		this->phySize *= 2;
+		this->statusArrRealloc(this->logSize, this->phySize);
+	}
+	this->stArr[this->logSize] = newStatus;
+	this->logSize++;
+}
+
+void StatusArr::statusArrRealloc(int currSize, int newSize)
+{
+	Status** newStArr = new Status*[newSize];
+	for (int i = 0; i < currSize; i++)
+		newStArr[i] = this->stArr[i];
+	delete[] this->stArr;
+	this->stArr = newStArr;
+}
+
+Status* StatusArr::getStatusByIndex(int index) const
+{
+	return this->stArr[index];
+}
+
+StatusArr::~StatusArr()
+{
+	for (int i = 0; i < this->logSize; i++)
+		delete[] this->stArr[i];
+	delete[] this->stArr;
+}

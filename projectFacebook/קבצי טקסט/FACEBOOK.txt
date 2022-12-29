@@ -1,0 +1,61 @@
+#ifndef _FACEBOOK_H
+#define _FACEBOOK_H
+
+#include "MemberArr.h"
+#include "Member.h"
+#include "Date.h"
+class FaceBook
+{
+private:
+	int const NOT_FOUND = -1;
+	MemberArr members;
+	//FanePageArr fanePages;
+
+public:
+	bool addNewMember(const char* name, Date birthDate);
+	bool connectMembers(const char* member1, const char* member2);
+	bool disconnectMembers(const char* member1, const char* member2);
+	//bool addNewFanePage(char* name);
+	//bool connectMemberToFanePage(Member member, FanePage fanePage);
+	//bool disconnectMemberToFanePage(Member member, FanePage fanePage);
+	void showAllUsers() const;
+	void showAllFriendsAndFanePageOfAMember(Member member);
+	void exitFromFaceBook();
+};
+#endif
+
+קוד CPP
+
+#include "FaceBook.h"
+
+bool FaceBook::addNewMember(const char* name, Date birthdate)
+{
+	if (this->members.findMemberByNameAndReturnIndex(name) != NOT_FOUND)
+		return false;
+	Member newMember(name, birthdate);
+	this->members.addMember(&newMember);
+	return true;
+}
+
+bool FaceBook::connectMembers(const char* member1,const char* member2)
+{
+	int memberOneIndex = this->members.findMemberByNameAndReturnIndex(member1);
+	int memberTwoIndex = this->members.findMemberByNameAndReturnIndex(member2);
+
+	if (memberOneIndex != NOT_FOUND || memberTwoIndex == NOT_FOUND)
+		return false;
+	this->members.getMemberByIndex(memberOneIndex)->addFriend(this->members.getMemberByIndex(memberTwoIndex));
+	return true;
+}
+
+bool FaceBook::disconnectMembers(const char* member1, const char* member2)
+{
+	int memberOneIndex = this->members.findMemberByNameAndReturnIndex(member1);
+	int memberTwoIndex = this->members.findMemberByNameAndReturnIndex(member2);
+
+	if (memberOneIndex != NOT_FOUND || memberTwoIndex == NOT_FOUND)
+		return false;
+	this->members.getMemberByIndex(memberOneIndex)->removeFriend(this->members.getMemberByIndex(memberTwoIndex));
+	return true;
+}
+

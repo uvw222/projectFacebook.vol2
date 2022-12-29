@@ -1,0 +1,145 @@
+#ifndef _MEMBER_H
+#define _MEMBER_H
+
+#include <iostream>
+#include <string.h>
+#include "MemberArr.h"
+#include "FanPageArr.h"
+#include "StatusArr.h"
+#include "Date.h"
+#pragma warning(disable: 4430)
+
+using namespace std;
+
+class Member
+{
+private:
+	char* name;
+	Date birthDate;
+	StatusArr myStatus;
+	MemberArr myFriends;
+	FanPageArr mySubscribing;
+public:
+	Member(const char* name, Date& birthDate);
+	~Member();
+	const char* getName()        const;
+	Date getBirthDate()          const;
+	StatusArr getMyStatus()		 const;
+	void addFriend(Member* other);
+	bool addSubscribeToFanPage(FanPage* fp);
+	void addStatus(char* text);
+	void showMyStatus()          const;
+	void showMyFriends10Status() const;
+	void showMyFriends()         const;
+	void removeFriend(Member* other);
+	void removeSubscribeFromFanPage();
+	void show()                  const;
+
+
+};
+
+#endif
+
+קוד CPP
+
+#include "Member.h"
+#include "FanPage.h"
+#pragma warning (disable: 4996)
+
+Member::Member(const char* name, Date& birthDate)
+{
+	this->name = new char[strlen(name) + 1];
+	strcpy(this->name, name);
+	this->birthDate = birthDate;
+}
+
+Date Member::getBirthDate() const
+{
+	return this->birthDate;
+}
+
+const char* Member::getName() const
+{
+	return this->name;
+}
+
+void Member::addFriend(Member* other)
+{
+	if (other != nullptr)
+	{
+		if (other != this && this->myFriends.findMemberByNameAndReturnIndex(other->getName()) != NOT_FOUND)
+		{
+			this->myFriends.addMember(other);
+			other->addFriend(this);
+		}
+	}
+}
+
+void Member::addStatus(char* text)
+{
+	this->myStatus.addStatus(text);
+}
+
+void Member::showMyStatus() const
+{
+	for (int i = 0; i < this->myStatus.getSize(); i++)
+		this->myStatus.getStatusByIndex(i)->show();	
+}
+
+void Member::showMyFriends10Status() const
+{
+
+	for (int i = 0; i < this->myFriends.getSize(); i++)
+	{
+		int lenght = this->myFriends.getMemberByIndex(i)->getMyStatus().getSize();
+		//this loop run on the 10 latests status of the #i-friend 
+		for (int j = lenght-1; j>-1 && j> lenght-10-1; j++)
+			this->myFriends.getMemberByIndex(i)->getMyStatus().getStatusByIndex(j)->show();
+	}
+}
+
+StatusArr Member::getMyStatus() const
+{
+	return this->myStatus;
+}
+
+void Member::showMyFriends() const
+{
+	for (int i = 0; i < this->myFriends.getSize(); i++)
+		cout <<this->myFriends.getMemberByIndex(i)->getName() <<"\n";
+}
+
+void Member::removeFriend(Member* other)
+{
+	if (other != nullptr)
+	{
+		if (other != this && this->myFriends.findMemberByNameAndReturnIndex(other->getName()) != NOT_FOUND)
+		{
+			this->myFriends.removeMember(other);
+			other->removeFriend(this);
+		}
+	}
+}
+
+void Member::show() const
+{
+	cout << "My name is: " << this->name << "\n"
+		<< "My birthday is " << this->birthDate.getDay() << "." << this->birthDate.getMonth() << "." << this->birthDate.getYear() << endl;
+}
+
+bool Member::addSubscribeToFanPage(FanPage* fanPage)
+{
+	if (fanPage != nullptr)
+	{
+		if (this->mySubscribing.findFanPageByNameAndReturnIndex(fanPage->getName()) != NOT_FOUND)
+		{
+			this->myFriends.addMember(other);
+			other->addFriend(this);
+		}
+	}
+}
+
+Member::~Member()
+{
+	delete[]name;
+}
